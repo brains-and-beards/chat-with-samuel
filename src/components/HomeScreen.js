@@ -8,7 +8,7 @@ export default class HomeScreen extends Component {
     return (
       <Screen>
         <NavigationBar 
-          centerComponent={<Title>Current bugs</Title>}
+          centerComponent={<Title>List items</Title>}
           styleName="inline"
         />
         <BugList />
