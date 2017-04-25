@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Animated,Easing, StyleSheet } from 'react-native';
+import { LayoutAnimation, StyleSheet } from 'react-native';
 import {
   Button, Caption, Icon, Image, ListView, Row, Subtitle, Text, TouchableOpacity, View
 } from '@shoutem/ui';
@@ -15,39 +15,33 @@ const styles = {
 
 export default class HomeScreen extends Component {
 
-  baseHeight = 25
-  textHeight = new Animated.Value(0)
   state = { expanded: false }
 
   constructor(props) {
     super(props);
-
     this.handlePress = this.handlePress.bind(this);
   }
 
-  calculateExpandedHeight() {
-    const { bug } = this.props;
-
-    return Math.ceil(bug.description.length / 40) * 25 + 15;
+  componentWillUpdate() {
+    const config = {
+      duration: 950,
+      update: {
+        type: 'spring',
+        springDamping: 0.4,
+      },
+    };
+    LayoutAnimation.configureNext(config);
   }
 
   handlePress() {
-    console.log('Handling press');
     this.setState(
       state => ({ expanded: !state.expanded }),
-      () => Animated.timing(this.textHeight, {
-        toValue: this.state.expanded ? 1 : 0,
-        duration: 300,
-      }).start()
     )
   }
 
   render() {
     const { bug } = this.props;
-    const height = this.textHeight.interpolate({
-      inputRange: [0, 1],
-      outputRange: [this.baseHeight, this.calculateExpandedHeight()]
-    })
+    const { expanded } = this.state;
 
     return (
       <TouchableOpacity onPress={this.handlePress}>
@@ -61,9 +55,7 @@ export default class HomeScreen extends Component {
               <Subtitle styleName="">{bug.name}</Subtitle>
               <Caption>{moment(bug.createdAt, "YYYYMMDD").fromNow()}</Caption>
             </View>
-            <Animated.View style={{ height }}>
-              <Text styleName="multiline">{bug.description}</Text>
-            </Animated.View>
+            <Text styleName="multiline">{expanded ? bug.description : bug.description.slice(0, 40) + "…"}</Text>
           </View>
         </Row>
       </TouchableOpacity>
