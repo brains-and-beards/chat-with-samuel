@@ -19,7 +19,10 @@ const styles = {
 
 export default class HomeScreen extends Component {
 
-  state = { showDetails: false }
+  state = { 
+    showDetails: false,
+    height: 75,
+  }
 
   constructor(props) {
     super(props);
@@ -27,16 +30,28 @@ export default class HomeScreen extends Component {
     this.handlePress = this.handlePress.bind(this);
   }
 
+  calculateNewHeight(expanded) {
+    const { bug } = this.props;
+    return expanded ? Math.ceil(bug.description.length / 40) * 25 + 60 : 75;
+  }
+
   handlePress() {
-    this.setState(prevState => ({ showDetails: !prevState.showDetails }));
+    this.setState(prevState => {
+      const showDetails = !prevState.showDetails;
+
+      return ({
+        showDetails,
+        height: this.calculateNewHeight(showDetails),
+      })
+    });
   }
 
   render() {
     const { bug } = this.props;
-    const { showDetails } = this.state;
+    const { showDetails, height } = this.state;
 
     return (
-      <TouchableOpacity onPress={this.handlePress}>
+      <TouchableOpacity onPress={this.handlePress} style={{ height }}>
         <Row>
           <Image
             styleName="small-avatar top"
