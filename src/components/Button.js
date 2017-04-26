@@ -45,7 +45,7 @@ export default class CustomButton extends Component {
     this.setState(
       { pressed: true },
       () => {
-        // onPress;
+        onPress();
         Animated.parallel([
           Animated.timing(this.state.animatedOpacity, {
             duration,
