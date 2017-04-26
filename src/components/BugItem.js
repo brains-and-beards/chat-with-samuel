@@ -75,7 +75,6 @@ export default class HomeScreen extends Component {
 
   render() {
     const { bug } = this.props;
-    console.log('Rendering item', bug);
     const { expanded } = this.state;
     const transformStyle = {
       transform: [

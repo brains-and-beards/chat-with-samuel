@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
 import { LayoutAnimation, StyleSheet } from 'react-native';
 import {
-  Button, Caption, Icon, Image, ListView, Row, Subtitle, Text, View
+  Caption, Icon, Image, ListView, Row, Subtitle, Text, View
 } from '@shoutem/ui';
 import moment from 'moment';
 
 import BugItem from './BugItem';
+import Button from './Button';
 import bugs from '../assets/data/Bugs';
 
 const styles = {
@@ -16,6 +17,9 @@ const styles = {
   list: {
     flex: 1,
   },
+  container: {
+    flex: 1,
+  }
 }
 
 export default class HomeScreen extends Component {
@@ -43,11 +47,15 @@ export default class HomeScreen extends Component {
 
   render() {
     return (
-      <ListView
-        data={this.state.bugs}
-        renderRow={this.renderRow}
-        style={styles.list}
-      />
+      <View style={styles.container}>
+        <ListView
+          data={this.state.bugs}
+          renderRow={this.renderRow}
+          style={styles.list}
+        />
+        
+        <Button onPress={() => this.setState({ bugs })} />
+      </View>
     );
   }
 }
