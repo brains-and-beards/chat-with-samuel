@@ -18,6 +18,7 @@ export default class HomeScreen extends Component {
   state = {
     expanded: false,
     slideOffset: 0,
+    animatedRemove: new Animated.Value(1),
   }
 
   constructor(props) {
@@ -27,10 +28,31 @@ export default class HomeScreen extends Component {
 
   componentWillMount() {
     this.panResponder = PanResponder.create({
-      onMoveShouldSetResponderCapture: () => true,
-      onMoveShouldSetPanResponderCapture: () => true,
-      onPanResponderMove: (event, gestureState) => this.handleSlide(gestureState.dx),
-      onPanResponderRelease: () => this.setState({ slideOffset: 0 }),
+      onMoveShouldSetPanResponder:
+        (event, gestureState) => gestureState.dx > 0,
+
+      onPanResponderMove: (event, gestureState) => {
+        this.setState({ slideOffset: gestureState.dx })
+      },
+
+      onPanResponderRelease: (event, gestureState) => {
+        if (gestureState.dx < 100) {
+          this.setState({ slideOffset: 0 });
+        } else {
+          Animated.timing( this.state.animatedRemove, {
+            duration: 300,
+            toValue: 0,
+          }).start( () => {
+            const { bug, handleRemove } = this.props;
+
+            handleRemove(bug);
+            this.setState({
+              animatedRemove: new Animated.Value(1),
+              slideOffset: 0,
+            });
+          });
+        }
+      }
     });
   }
 
@@ -45,11 +67,6 @@ export default class HomeScreen extends Component {
     LayoutAnimation.configureNext(config);
   }
 
-  handleSlide(offsetX) {
-    if (offsetX > 100) return null;
-    if (offsetX >= 0) this.setState({ slideOffset: offsetX });
-  }
-
   handlePress() {
     this.setState(
       state => ({ expanded: !state.expanded }),
@@ -58,11 +75,16 @@ export default class HomeScreen extends Component {
 
   render() {
     const { bug } = this.props;
+    console.log('Rendering item', bug);
     const { expanded } = this.state;
     const transformStyle = {
       transform: [
         { translateX: this.state.slideOffset },
       ],
+      opacity: this.state.animatedRemove.interpolate({
+        inputRange: [0, 1],
+        outputRange: [0, 1],
+      }),
     }
 
     return (

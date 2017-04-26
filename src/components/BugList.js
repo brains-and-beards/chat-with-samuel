@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet } from 'react-native';
+import { LayoutAnimation, StyleSheet } from 'react-native';
 import {
   Button, Caption, Icon, Image, ListView, Row, Subtitle, Text, View
 } from '@shoutem/ui';
@@ -21,9 +21,23 @@ const styles = {
 export default class HomeScreen extends Component {
   state = { bugs }
 
+  constructor(props) {
+    super(props);
+
+    this.handleRemove = this.handleRemove.bind(this);
+    this.renderRow = this.renderRow.bind(this);
+  }
+
+  handleRemove(elementToRemove) {
+    this.setState(state => {
+      const filteredBugs = state.bugs.filter(item => item != elementToRemove);
+      return({ bugs: filteredBugs });
+    })
+  }
+
   renderRow(bug) {
     return (
-      <BugItem bug={bug} />
+      <BugItem bug={bug} handleRemove={this.handleRemove} />
     );
   }
 
